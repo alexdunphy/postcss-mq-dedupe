@@ -1,8 +1,10 @@
+/* eslint-env node */
+
 'use strict';
 
 var postcss = require('postcss');
 var cssMediaQuery = require('css-mediaquery');
-var units = require('units');
+var units = require('units-css');
 
 
 // Utilities
@@ -11,7 +13,7 @@ var units = require('units');
 var hasOwnProperty = {}.hasOwnProperty;
 
 var getPxValue = function(value, property) {
-  return units.convert('px', value, null, property).value;
+  return units.convert('px', value, null, property);
 };
 
 

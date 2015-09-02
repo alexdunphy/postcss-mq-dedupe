@@ -1,0 +1,6 @@
+/test/
+/.editorconfig
+/.eslintrc
+/.gitattributes
+/.travis.yml
+/gulpfile.js

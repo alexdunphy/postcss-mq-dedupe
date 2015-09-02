@@ -8,5 +8,4 @@ node_modules/
 .DS_Store
 
 ### Test ###
-/test/vendor/lib.js
 /test/coverage/
