@@ -5,7 +5,7 @@
   "author": "Alex Dunphy <alexanderdunphy@gmail.com>",
   "main": "index.js",
   "scripts": {
-    "test": "gulp dev",
+    "test": "gulp",
     "coveralls": "if [ ! -f ./test/coverage/lcov.info ]; then npm test; fi; cat ./test/coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "repository": {
