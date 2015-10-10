@@ -12,8 +12,8 @@ var units = require('units-css');
 
 var hasOwnProperty = {}.hasOwnProperty;
 
-var getPxValue = function(value, property) {
-  return units.convert('px', value, null, property);
+var normalizeValue = function(value, property) {
+  return units.convert('_default', value, null, property);
 };
 
 
@@ -35,13 +35,14 @@ module.exports = postcss.plugin('postcss-mq-simplify', function() {
 
 var formatMedia = function(media, callback) {
   var rules = cssMediaQuery.parse(media.params);
-  var conditions = {};
+  var clauses = [];
 
   // Format data structure
   rules.forEach(function(rule) {
-    var level = conditions;
+    var level = {};
     var prevLevel;
 
+    clauses.push(level);
     level = createStructure(level, rule.inverse);
     level = createStructure(level, rule.type);
     prevLevel = level; // Cache position
@@ -58,35 +59,41 @@ var formatMedia = function(media, callback) {
     });
   });
 
-  return callback(media, conditions);
+  return callback(media, clauses);
 };
 
-var buildOutput = function(media, conditions) {
+var buildOutput = function(media, clauses) {
   var output = [];
 
-  forLevel(conditions, function(inverse, level) {
-    output.push(
-      inverse === false.toString()
-        ? 'only'
-        : 'not'
-    );
+  clauses.forEach(function(clause, index) {
+    if (index > 0) {
+      output.push(',');
+    }
 
-    forLevel(level, function(type, level) {
-      output.push(type);
+    forLevel(clause, function(inverse, level) {
+      output.push(
+        inverse === false.toString()
+          ? 'only'
+          : 'not'
+      );
 
-      forLevel(level, function(modifier, level) {
-        // level is an array at this point if rule lacks a modifier
-        if (Array.isArray(level)) {
-          pushFeature(output, modifier, level[0]);
-        } else {
-          if (typeof transforms[modifier] === 'function') {
-            transforms[modifier](level);
+      forLevel(level, function(type, level) {
+        output.push(type);
+
+        forLevel(level, function(modifier, level) {
+          // level is an array at this point if rule lacks a modifier
+          if (Array.isArray(level)) {
+            pushFeature(output, modifier, level[0]);
+          } else {
+            if (typeof transforms[modifier] === 'function') {
+              transforms[modifier](level);
+            }
+
+            forLevel(level, function(feature, value) {
+              pushFeature(output, feature, value[0], modifier);
+            });
           }
-
-          forLevel(level, function(feature, value) {
-            pushFeature(output, feature, value[0], modifier);
-          });
-        }
+        });
       });
     });
   });
@@ -134,7 +141,7 @@ transforms.min = function(rules) {
     }
 
     rules[feature] = [rules[feature].reduce(function(a, b) {
-      return getPxValue(a) > getPxValue(b)
+      return normalizeValue(a, feature) > normalizeValue(b, feature)
         ? a
         : b;
     })];
@@ -150,7 +157,7 @@ transforms.max = function(rules) {
     }
 
     rules[feature] = [rules[feature].reduce(function(a, b) {
-      return getPxValue(a) < getPxValue(b)
+      return normalizeValue(a, feature) < normalizeValue(b, feature)
         ? a
         : b;
     })];
