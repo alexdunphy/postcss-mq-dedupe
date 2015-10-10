@@ -33,7 +33,7 @@
   "dependencies": {
     "css-mediaquery": "^0.1.2",
     "postcss": "^5.0.4",
-    "units-css": "^0.3.0"
+    "units-css": "^0.4.0"
   },
   "keywords": [
     "postcss",
