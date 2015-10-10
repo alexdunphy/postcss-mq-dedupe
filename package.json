@@ -1,6 +1,6 @@
 {
   "name": "postcss-mq-dedupe",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "",
   "author": "Alex Dunphy <alexanderdunphy@gmail.com>",
   "main": "index.js",
