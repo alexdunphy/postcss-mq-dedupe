@@ -22,7 +22,7 @@ var normalizeValue = function(value, property) {
 
 module.exports = postcss.plugin('postcss-mq-simplify', function() {
   return function(css) {
-    css.eachAtRule('media', function(media) {
+    css.walkAtRules('media', function(media) {
       // Update AST value
       media.params = formatMedia(media, buildOutput);
     });
